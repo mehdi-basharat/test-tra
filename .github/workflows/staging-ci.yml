@@ -1,0 +1,157 @@
+name: Staging CI - TyrRewards Web App
+on:
+  push:
+    branches:
+      - staging
+    paths-ignore:
+      - '**/README.md'
+  workflow_dispatch:
+env:
+  NEXT_APP_ENV: staging
+  NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL_STAGING }}
+  NEXT_PUBLIC_CANONICAL_URL: ${{ secrets.NEXT_PUBLIC_CANONICAL_URL_STAGING }}
+  NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+  NEXT_PUBLIC_APP_API_URL: ${{ secrets.NEXT_PUBLIC_APP_API_URL }}
+  NEXT_PUBLIC_TYRADS_SDK_API_KEY: ${{ secrets.NEXT_PUBLIC_TYRADS_SDK_API_KEY }}
+  NEXT_PUBLIC_TYRADS_SDK_API_SECRET: ${{ secrets.NEXT_PUBLIC_TYRADS_SDK_API_SECRET }}
+  NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
+  NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
+  NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
+  NEXT_PUBLIC_FACEBOOK_PIXEL_ID: ${{ secrets.NEXT_PUBLIC_FACEBOOK_PIXEL_ID }}
+  NEXT_PUBLIC_TYR_REWARDS_ACMOSOFT: ${{ secrets.NEXT_PUBLIC_TYR_REWARDS_ACMOSOFT }}
+  NEXT_PUBLIC_SDK_LOGGER_TYRADS: ${{ secrets.NEXT_PUBLIC_SDK_LOGGER_TYRADS }}
+  NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL_STAGING }}
+  NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+  FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
+  FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
+  FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
+  FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
+  FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
+  FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+  FIREBASE_MEASUREMENT_ID: ${{ secrets.FIREBASE_MEASUREMENT_ID }}
+  GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+  NEXT_PUBLIC_APPLE_SECRET: ${{ secrets.NEXT_PUBLIC_APPLE_SECRET }}
+  NEXT_PUBLIC_APPLE_SECRET_STG: ${{ secrets.NEXT_PUBLIC_APPLE_SECRET_STG }}
+  NEXT_PUBLIC_SENTRY_AUTH_TOKEN: ${{ secrets.NEXT_PUBLIC_SENTRY_AUTH_TOKEN }}
+  NEXT_PUBLIC_APPLE_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_APPLE_CLIENT_ID }}
+  NEXT_PUBLIC_APPLE_CLIENT_ID_STG: ${{ secrets.NEXT_PUBLIC_APPLE_CLIENT_ID_STG }}
+  GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+  NEXT_PUBLIC_APPSFLYER_WEB_KEY: ${{ secrets.NEXT_PUBLIC_APPSFLYER_WEB_KEY }}
+  NEXT_PUBLIC_TYR_SDK_API_URL: ${{ secrets.NEXT_PUBLIC_TYR_SDK_API_URL }}
+  NEXT_PUBLIC_GTM_ID: ${{ secrets.NEXT_PUBLIC_GTM_ID }}
+  NEXT_PUBLIC_TYRADS_AMPLITUDE_API_KEY: ${{ secrets.NEXT_PUBLIC_TYRADS_AMPLITUDE_API_KEY }}
+  NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
+  NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
+  NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}
+  NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID }}
+  NEXT_PUBLIC_TYRADS_AMPLITUDE_API_KEY_STG: ${{ secrets.NEXT_PUBLIC_TYRADS_AMPLITUDE_API_KEY_STG }}
+  NEXT_PUBLIC_TYRADS_VERISOUL_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_TYRADS_VERISOUL_PROJECT_ID }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    name: Build and Push Docker Image
+    permissions:
+      contents: read
+      packages: write
+      repository-projects: write
+    outputs:
+      short_sha: ${{ steps.vars.outputs.sha_short }}
+      author: ${{ steps.vars.outputs.author }}
+      message: ${{ steps.vars.outputs.message }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Get short SHA, message, and author from commit
+        id: vars
+        run: |
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "author=$(git log -1 --pretty=%an)" >> $GITHUB_OUTPUT
+          echo "message=$(git log -1 --pretty=%B | head -1)" >> $GITHUB_OUTPUT
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_DEFAULT_REGION }}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Build and push
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: tyrrewards-webapp
+          IMAGE_TAG: staging-${{ steps.vars.outputs.sha_short}}
+          DOCKERFILE: Dockerfile
+        run: |
+          docker build --no-cache -t $REGISTRY/$REPOSITORY:$IMAGE_TAG \
+            --build-arg NEXT_APP_ENV="$NEXT_APP_ENV" \
+            --build-arg NEXT_PUBLIC_BASE_URL="$NEXT_PUBLIC_BASE_URL" \
+            --build-arg NEXT_PUBLIC_CANONICAL_URL="$NEXT_PUBLIC_CANONICAL_URL" \
+            --build-arg NEXT_PUBLIC_API_URL="$NEXT_PUBLIC_API_URL" \
+            --build-arg NEXT_PUBLIC_APP_API_URL="$NEXT_PUBLIC_APP_API_URL" \
+            --build-arg NEXT_PUBLIC_TYRADS_SDK_API_KEY="$NEXT_PUBLIC_TYRADS_SDK_API_KEY" \
+            --build-arg NEXT_PUBLIC_TYRADS_SDK_API_SECRET="$NEXT_PUBLIC_TYRADS_SDK_API_SECRET" \
+            --build-arg NEXT_PUBLIC_FIREBASE_API_KEY="$NEXT_PUBLIC_FIREBASE_API_KEY" \
+            --build-arg NEXT_PUBLIC_FIREBASE_PROJECT_ID="$NEXT_PUBLIC_FIREBASE_PROJECT_ID" \
+            --build-arg NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="$NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN" \
+            --build-arg NEXT_PUBLIC_FACEBOOK_PIXEL_ID="$NEXT_PUBLIC_FACEBOOK_PIXEL_ID" \
+            --build-arg NEXT_PUBLIC_TYR_REWARDS_ACMOSOFT="$NEXT_PUBLIC_TYR_REWARDS_ACMOSOFT" \
+            --build-arg NEXT_PUBLIC_SDK_LOGGER_TYRADS="$NEXT_PUBLIC_SDK_LOGGER_TYRADS" \
+            --build-arg NEXTAUTH_URL="$NEXTAUTH_URL" \
+            --build-arg NEXTAUTH_SECRET="$NEXTAUTH_SECRET" \
+            --build-arg FIREBASE_CLIENT_EMAIL="$FIREBASE_CLIENT_EMAIL" \
+            --build-arg FIREBASE_PRIVATE_KEY="$FIREBASE_PRIVATE_KEY" \
+            --build-arg FIREBASE_AUTH_DOMAIN="$FIREBASE_AUTH_DOMAIN" \
+            --build-arg FIREBASE_STORAGE_BUCKET="$FIREBASE_STORAGE_BUCKET" \
+            --build-arg FIREBASE_MESSAGING_SENDER_ID="$FIREBASE_MESSAGING_SENDER_ID" \
+            --build-arg FIREBASE_APP_ID="$FIREBASE_APP_ID" \
+            --build-arg FIREBASE_MEASUREMENT_ID="$FIREBASE_MEASUREMENT_ID" \
+            --build-arg NEXT_PUBLIC_APPLE_CLIENT_ID="$NEXT_PUBLIC_APPLE_CLIENT_ID" \
+            --build-arg NEXT_PUBLIC_APPLE_CLIENT_ID_STG="$NEXT_PUBLIC_APPLE_CLIENT_ID_STG" \
+            --build-arg NEXT_PUBLIC_APPLE_SECRET="$NEXT_PUBLIC_APPLE_SECRET" \
+            --build-arg NEXT_PUBLIC_APPLE_SECRET_STG="$NEXT_PUBLIC_APPLE_SECRET_STG" \
+            --build-arg NEXT_PUBLIC_SENTRY_AUTH_TOKEN="$NEXT_PUBLIC_SENTRY_AUTH_TOKEN" \
+            --build-arg GOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID" \
+            --build-arg GOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET" \
+            --build-arg NEXT_PUBLIC_APPSFLYER_WEB_KEY="$NEXT_PUBLIC_APPSFLYER_WEB_KEY" \
+            --build-arg NEXT_PUBLIC_TYR_SDK_API_URL="$NEXT_PUBLIC_TYR_SDK_API_URL" \
+            --build-arg NEXT_PUBLIC_GTM_ID="$NEXT_PUBLIC_GTM_ID" \
+            --build-arg NEXT_PUBLIC_TYRADS_AMPLITUDE_API_KEY="$NEXT_PUBLIC_TYRADS_AMPLITUDE_API_KEY" \
+            --build-arg NEXT_PUBLIC_FIREBASE_APP_ID="$NEXT_PUBLIC_FIREBASE_APP_ID" \
+            --build-arg NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="$NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID" \
+            --build-arg NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="$NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET" \
+            --build-arg NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID="$NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID" \
+            --build-arg NEXT_PUBLIC_TYRADS_AMPLITUDE_API_KEY_STG="$NEXT_PUBLIC_TYRADS_AMPLITUDE_API_KEY_STG" \
+            --build-arg NEXT_PUBLIC_TYRADS_VERISOUL_PROJECT_ID="$NEXT_PUBLIC_TYRADS_VERISOUL_PROJECT_ID" .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+  trigger-deployment:
+    runs-on: ubuntu-latest
+    name: Trigger Deployment
+    needs: [build-and-push]
+    permissions:
+      contents: read
+      packages: write
+      repository-projects: write
+    env:
+      IMAGE_TAG: 'staging-${{ needs.build-and-push.outputs.short_sha }}'
+      WORKDIR: staging
+      COMMIT_SHORT_SHA: ${{ needs.build-and-push.outputs.short_sha }}
+      COMMIT_AUTHOR: ${{ needs.build-and-push.outputs.author }}
+      COMMIT_MESSAGE: ${{ needs.build-and-push.outputs.message }}
+    steps:
+      - name: Clone deployment repository
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ vars.DEPLOYMENT_REPO }}
+          ref: main
+          token: ${{ secrets.GH_TOKEN }}
+      - name: Replace Docker image tag
+        working-directory: ${{ env.WORKDIR }}
+        run: sed -i 's/\(\$DOCKER_IMAGE:\)[^"]*/\1${{ env.IMAGE_TAG }}/' task-definition.json
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email ''
+          git commit -am "${{env.COMMIT_SHORT_SHA}} by ${{env.COMMIT_AUTHOR}}: ${{env.COMMIT_MESSAGE}}"
+          git push origin main

@@ -1,0 +1,2 @@
+echo "[husky] - 💬 Run commit-message checker"
+npx --no -- commitlint --edit $1

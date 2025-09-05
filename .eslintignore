@@ -1,0 +1,8 @@
+node_modules
+dist
+build
+assets
+public/scripts
+
+# Typescript types
+**/*.d.ts

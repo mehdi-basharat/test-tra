@@ -1,0 +1,2 @@
+echo "[husky] - 💅 Run linter"
+npx lint-staged
