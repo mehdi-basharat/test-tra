@@ -1,11 +1,5 @@
-export type CompanyData = {
-  [domain: string]: {
-    name: string;
-    ownedBy: string;
-    tagline: string;
-    logo: string;
-  };
-};
+import { CompanyData } from "@/types/company";
+
 
 export const companyData: CompanyData = {
   'tyrads-landing.acmosoft.com': {
