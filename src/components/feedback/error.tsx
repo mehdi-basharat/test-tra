@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { delay } from 'lodash';
 
-import type { ErrorBoundaryProps } from '@/app/(main)/error';
+import { ErrorBoundaryProps } from '@/app/(main)/error';
 
 import { cn } from '@/lib/utils';
 
