@@ -1,24 +1,28 @@
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 
-import Footer from '@/components/layout/footer';
+import { getServerAuth } from '@/app/api/auth/[...nextauth]/config';
+
 import Navbar from '@/components/layout/navbar';
+import TyradsCopyright from '@/components/tyrads/copyright';
 
 import { getUserDetails } from '@/repository/user-details';
 import { getUserTyrPoints } from '@/repository/user-tyr-points';
+import RedTrackScriptInstantReward from '@/components/scripts/red-track-instant-reward';
 
-import { getServerAuth } from '../api/auth/[...nextauth]/config';
-
-export default async function HomeLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function AppLayout({
+  children,
+  modal,
+}: Readonly<{ children: React.ReactNode; modal: React.ReactNode }>) {
   const session = await getServerAuth();
   const queryClient = new QueryClient();
 
   if (session) {
     await queryClient.prefetchQuery({
-      queryKey: ['points', session.user.user_id],
+      queryKey: ['points', session?.user.user_id],
       queryFn: () => getUserTyrPoints(session.user.user_id, session.user.token),
     });
     await queryClient.prefetchQuery({
-      queryKey: ['user-details', session.user.user_id],
+      queryKey: ['user-details'],
       queryFn: () => getUserDetails(session.user.user_id, session.user.token),
     });
   }
@@ -27,13 +31,18 @@ export default async function HomeLayout({ children }: Readonly<{ children: Reac
 
   return (
     <HydrationBoundary state={dehydratedState}>
-      <Navbar />
-      <div className="flex flex-1 flex-col items-center overflow-y-auto overflow-x-hidden sm:scrollbar-gutter">
-        <div className="w-full flex-1 max-w-screen-3xl sm:mt-10">
-          <div className="m-auto h-full">{children}</div>
+      <div className="flex h-dvh flex-col">
+        <Navbar />
+        <div className="flex h-full flex-col overflow-auto bg-[#1E2020] sm:scrollbar-gutter">
+          <section className="m-auto flex w-full flex-1 max-w-screen-3xl">
+            <div className="m-auto h-full">{children}</div>
+          </section>
+          {modal}
+          <TyradsCopyright className="block" />
         </div>
-        <Footer />
       </div>
+
+      <RedTrackScriptInstantReward />
     </HydrationBoundary>
   );
 }
