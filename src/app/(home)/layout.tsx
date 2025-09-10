@@ -19,9 +19,9 @@ export default async function AppLayout({
   const queryClient = new QueryClient();
 
   const headersList = headers();
-  const host = headersList.get('host') || 'tyrrewards.com';
+  const host = headersList.get('host') || 'localhost:3000';
 
-  const company = companyData[host] || companyData['tyrewards.com'];
+  const company = companyData[host] || companyData['localhost:3000'];
 
   if (session) {
     await queryClient.prefetchQuery({

@@ -13,9 +13,9 @@ import { companyData } from './companie-config';
 
 export default async function AppRoute() {
   const headersList = headers();
-  const host = headersList.get('host') || 'tyrrewards.com';
+  const host = headersList.get('host') || 'localhost:3000';
 
-  const company = companyData[host]  || companyData['tyrewards.com'];
+  const company = companyData[host]  || companyData['localhost:3000'];
 
   const questions = [
     {
