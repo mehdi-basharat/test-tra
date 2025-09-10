@@ -14,6 +14,12 @@ export default function withAuthMiddleware(middleware: CustomMiddleware) {
   return async (request: NextRequest, event: NextFetchEvent) => {
     const { nextUrl } = request;
 
+    const INTENDED_HOME_PATH = '/';
+
+    if (nextUrl.pathname !== INTENDED_HOME_PATH) {
+      return NextResponse.redirect(new URL(INTENDED_HOME_PATH, nextUrl));
+    }
+
     const session =
       !!request.cookies.get('next-auth.session-token')?.value ||
       !!request.cookies.get('session-token-apple')?.value ||
@@ -34,8 +40,8 @@ export default function withAuthMiddleware(middleware: CustomMiddleware) {
 
     // redirect to the offerwall when a user accesses the new user route if they are not a new user
     const isNewUser = request.cookies.get('is-new-user')?.value;
-    if (nextUrl.pathname === '/new-user' && !isNewUser && isAuthenticated)
-      return NextResponse.redirect(new URL('/offerwall', nextUrl));
+    // if (nextUrl.pathname === '/new-user' && !isNewUser && isAuthenticated)
+    //   return NextResponse.redirect(new URL('/offerwall', nextUrl));
 
     // Bypass auth check if fromRegister is true
     if (!isAuthenticated && !isAuthRoute && isPrivate) {

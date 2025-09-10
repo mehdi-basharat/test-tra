@@ -5,8 +5,8 @@ import Image from 'next/image';
 import TyradsCopyright from '@/components/tyrads/copyright';
 import { TypographyH3, TypographyP } from '@/components/ui/typography';
 
-import DownloadButtons from '../../(home)/_components/DownloadButtons';
-import Header from '../../(home)/_components/Header';
+import DownloadButtons from '../../(homee)/_components/DownloadButtons';
+import Header from '../../(homee)/_components/Header';
 
 import useViewEvent from './_usecase/use-view-event';
 
