@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-async-client-component */
-'use client';
+// 'use client';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -8,8 +8,14 @@ import { Button } from '@/components/ui/button';
 import { TypographyH1 } from '@/components/ui/typography';
 import { TypographyH2, TypographyH3, TypographyH4, TypographyH6 } from '@/components/ui/typography/heading';
 import CountUp from '@/components/data-display/count-up';
+import { headers } from 'next/headers';
+import { companyData } from './companie-config';
 
 export default async function AppRoute() {
+  const headersList = headers();
+  const host = headersList.get('host') || 'tyrrewards.com';
+
+  const company = companyData[host]  || companyData['tyrewards.com'];
 
   const questions = [
     {
@@ -113,7 +119,7 @@ export default async function AppRoute() {
 
           <div>
             <TypographyH2 className="text-md text-center font-light text-[#CFCFCF] sm:text-left sm:text-2xl">
-              Discover fun mobile games and start earning gift cards or PayPal cash with Tyr Rewards
+              Discover fun mobile games and start earning gift cards or PayPal cash with {company.name}
             </TypographyH2>
           </div>
 
@@ -145,7 +151,7 @@ export default async function AppRoute() {
         </div>
 
         <TypographyH1 className="pb-8 text-center text-2xl text-[#CFCFCF] sm:mt-12 sm:text-base">
-          Why you’ll love Tyr Rewards
+          Why you’ll love {company.name}
         </TypographyH1>
 
         <div className="flex flex-col items-center justify-center">

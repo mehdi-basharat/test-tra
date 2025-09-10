@@ -8,6 +8,8 @@ import TyradsCopyright from '@/components/tyrads/copyright';
 import { getUserDetails } from '@/repository/user-details';
 import { getUserTyrPoints } from '@/repository/user-tyr-points';
 import RedTrackScriptInstantReward from '@/components/scripts/red-track-instant-reward';
+import { companyData } from './companie-config';
+import { headers } from 'next/headers';
 
 export default async function AppLayout({
   children,
@@ -15,6 +17,11 @@ export default async function AppLayout({
 }: Readonly<{ children: React.ReactNode; modal: React.ReactNode }>) {
   const session = await getServerAuth();
   const queryClient = new QueryClient();
+
+  const headersList = headers();
+  const host = headersList.get('host') || 'tyrrewards.com';
+
+  const company = companyData[host] || companyData['tyrewards.com'];
 
   if (session) {
     await queryClient.prefetchQuery({
@@ -38,7 +45,7 @@ export default async function AppLayout({
             <div className="m-auto h-full">{children}</div>
           </section>
           {modal}
-          <TyradsCopyright className="block" />
+          <TyradsCopyright className="block" company={company}/>
         </div>
       </div>
 
