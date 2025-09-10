@@ -14,8 +14,12 @@ export default function withAuthMiddleware(middleware: CustomMiddleware) {
   return async (request: NextRequest, event: NextFetchEvent) => {
     const { nextUrl } = request;
 
-    const INTENDED_HOME_PATH = '/';
+    const isStaticAsset = nextUrl.pathname.startsWith('/_next/static/') || nextUrl.pathname.includes('.');
+    if (isStaticAsset) {
+      return NextResponse.next();
+    }
 
+    const INTENDED_HOME_PATH = '/';
     if (nextUrl.pathname !== INTENDED_HOME_PATH) {
       return NextResponse.redirect(new URL(INTENDED_HOME_PATH, nextUrl));
     }
