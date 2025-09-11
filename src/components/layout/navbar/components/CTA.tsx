@@ -7,7 +7,7 @@ const CTAButtons = () => {
 
   return (
     <div className="flex justify-end gap-3">
-      <Link href="https://tyrrewards.com" target="_blank">
+      <Link href="https://tyrrewards.com/login" target="_blank">
         <Button size="sm">Login</Button>
       </Link>
       {/* <Link href="/signup" onClick={handleOnSignupClick}>

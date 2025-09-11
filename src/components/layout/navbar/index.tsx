@@ -55,7 +55,7 @@ const Navbar = (props: Props) => {
               width={150}
             />
           </Link>
-          <div className="hidden h-full flex-1 gap-8 text-lg lg:flex">
+          {/* <div className="hidden h-full flex-1 gap-8 text-lg lg:flex">
             {navLinks.map(link => {
               if (link.isPrivateUrl && session && status === 'authenticated')
                 return (
@@ -73,14 +73,16 @@ const Navbar = (props: Props) => {
 
               return null;
             })}
-          </div>
-          {session && status === 'authenticated' ? (
-            <UserPoints />
-          ) : sessionLocalStorage ? (
-            <UserPoints />
-          ) : (
+          </div> */}
+          {
+          // session && status === 'authenticated' ? (
+          //   <UserPoints />
+          // ) : sessionLocalStorage ? (
+          //   <UserPoints />
+          // ) : (
             <CTAButtons />
-          )}
+          // )
+          }
         </div>
       </nav>
     </>

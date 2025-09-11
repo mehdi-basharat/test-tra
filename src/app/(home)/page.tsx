@@ -123,7 +123,7 @@ export default async function AppRoute() {
             </TypographyH2>
           </div>
 
-          <Link className="hidden sm:block" href="https://tyrrewards.com" target="_blank">
+          <Link className="hidden sm:block" href="https://tyrrewards.com/w2a" target="_blank">
             <Button className="rounded-[16px] px-12 py-8">
               <TypographyH2>Get Started</TypographyH2>
             </Button>
@@ -143,7 +143,7 @@ export default async function AppRoute() {
 
       <section className="px-4 pb-12 sm:px-16 sm:pb-32">
         <div className="mb-12 flex justify-center sm:hidden">
-          <Link href="https://tyrrewards.com" target="_blank">
+          <Link href="https://tyrrewards.com/w2a" target="_blank">
             <Button className="rounded-[16px] px-12 py-8">
               <TypographyH2>Let’s Get Started</TypographyH2>
             </Button>
@@ -184,7 +184,7 @@ export default async function AppRoute() {
         </div>
 
         <div className="mt-12 flex justify-center">
-          <Link href="https://tyrrewards.com" target="_blank">
+          <Link href="https://tyrrewards.com/w2a" target="_blank">
             <Button className="rounded-[16px] px-12 py-8">
               <TypographyH2>Start Earning Now</TypographyH2>
             </Button>
@@ -217,7 +217,7 @@ export default async function AppRoute() {
               <TypographyH1 className="text-center text-white lg:text-left">Start Earning</TypographyH1>
               <TypographyH1 className="text-center text-white lg:text-left">While You Playing</TypographyH1>
 
-              <Link className="hidden sm:block" href="https://tyrrewards.com" target="_blank">
+              <Link className="hidden sm:block" href="https://tyrrewards.com/w2a" target="_blank">
                 <Button className="mt-10  rounded-[16px] px-12 py-8 ">
                   <TypographyH2>Start Earning Now</TypographyH2>
                 </Button>
@@ -234,7 +234,7 @@ export default async function AppRoute() {
               width={801}
             />
 
-            <Link className="sm:hidden" href="https://tyrrewards.com" target="_blank">
+            <Link className="sm:hidden" href="https://tyrrewards.com/w2a" target="_blank">
               <Button className="mt-10 w-full rounded-[16px] px-12 py-8">
                 <TypographyH2>Start Earning Now</TypographyH2>
               </Button>
@@ -288,7 +288,7 @@ export default async function AppRoute() {
             />
             <TypographyH2 className="text-[#CFCFCF]">Still looking for answers?</TypographyH2>
 
-            <Link href="https://tyrrewards.com" target="_blank">
+            <Link href="https://tyrrewards.com/w2a" target="_blank">
               <Button className="mt-4 w-full rounded-[16px] px-12 py-8">
                 <TypographyH2>Contact Us</TypographyH2>
               </Button>
